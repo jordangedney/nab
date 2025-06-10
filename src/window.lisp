@@ -19,7 +19,7 @@
 
 (def mk-graphics (cfgs win ren)
   `(:graphics (:win ,win
-               :ren ,ren 
+               :ren ,ren
                :fonts nil ; TODO
                :cursors nil ; TODO
                :draw-calls-ref nil ; TODO
