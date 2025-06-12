@@ -2,6 +2,10 @@
 (in-package #:nab)
 (cl-syntax:use-syntax :clump)
 
+;; constants ------------------------------------------------------------------
+(set *data-path* "/data/")
+(set *images-path* (string *data-path*) ())
+
 (def float->byte (f) (truncate (* 255 f)))
 
 (def get-sdl-error (header)

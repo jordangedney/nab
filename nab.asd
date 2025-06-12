@@ -7,12 +7,18 @@
   :version "0.0.1"
   :serial t
   :pathname "src"
-  :depends-on (:clump :cl-syntax :cffi :sdl3-raw)
+  :depends-on (:clump
+               :cl-syntax
+               :cffi
+               :sdl3-raw
+               :bordeaux-threads
+               :trivial-channels
+               )
   :components ((:file "package")
                (:file "scratch")
                (:file "util")
                (:file "configs")
                (:file "file-cache")
-               (:file "appenv")
                (:file "window")
+               (:file "appenv")
                (:file "nab")))

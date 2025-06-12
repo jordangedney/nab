@@ -16,6 +16,11 @@
 (def mk-appenv-write ()
   '(:messages nil))
 
-(def mk-appenv (cfgs window)
-  `(:read ,(mk-appenv-read cfgs window)
-    :write ,(mk-appenv-write)))
+(def mk-appenv ()
+  (= ((cfgs (mk-configs))
+      (window (mk-window cfgs))
+      (read (mk-appenv-read cfgs window))
+      (write (mk-appenv-write)))
+     `(:read ,read
+       :write ,write)))
+

@@ -6,14 +6,12 @@
 (require :sdl3-raw)
 
 (def main ()
-  (= ((cfgs (mk-configs))
-      (window (mk-window cfgs))
-      (appenv (mk-appenv cfgs window)))
+  (= (appenv (mk-appenv))
 
      (run-game appenv)
 
-     (sdl3-raw:sdl-destroy-renderer (dig window :graphics :ren))
-     (sdl3-raw:sdl-destroy-window (dig window :graphics :win))))
+     (sdl3-raw:sdl-destroy-renderer (dig appenv :read :graphics :ren))
+     (sdl3-raw:sdl-destroy-window (dig appenv :read :graphics :win))))
 
 (def event-quit? (event) (mem event '(sdl3-raw:sdl-event-quit 525 528 769)))
 
@@ -41,3 +39,5 @@
 
                    (sdl3-raw:sdl-render-clear (dig appenv :read :graphics :ren))
                    (sdl3-raw:sdl-render-present (dig appenv :read :graphics :ren))))))))
+
+;; game -----------------------------------------------
