@@ -7,8 +7,8 @@
             :hide-hud t)))
 
 (def mk-render-config ()
-  '(:render (:width 500
-             :height 500
+  '(:render (:width 50
+             :height 50
              :window-title "nab"
              :window-mode :fullscreen
              :window-display-index 0

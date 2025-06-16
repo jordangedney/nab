@@ -6,38 +6,71 @@
 (require :sdl3-raw)
 
 (def main ()
-  (= (appenv (mk-appenv))
+  (= ((env (mk-env)))
+     (run env)
+     (sdl3-raw:sdl-destroy-renderer (dig env :read :graphics :ren))
+     (sdl3-raw:sdl-destroy-window (dig env :read :graphics :win))))
 
-     (run-game appenv)
+(def draw-game (env)
+  (= ((now (/ (sdl3-raw:sdl-get-ticks) 1000))
+      (red (calc-color now 0.0))
+      (green (calc-color now 2.0))
+      (blue (calc-color now 4.0)))
 
-     (sdl3-raw:sdl-destroy-renderer (dig appenv :read :graphics :ren))
-     (sdl3-raw:sdl-destroy-window (dig appenv :read :graphics :win))))
+     (progn
+       (sdl3-raw:sdl-set-render-draw-color
+        (dig env :read :graphics :ren) red green blue 255)
 
-(def event-quit? (event) (mem event '(sdl3-raw:sdl-event-quit 525 528 769)))
+       (sdl3-raw:sdl-render-clear (dig env :read :graphics :ren))
+       (sdl3-raw:sdl-render-present (dig env :read :graphics :ren)))))
 
-(def run-game (appenv)
-  (cffi:with-foreign-object (event '(:union sdl3-raw:sdl-event))
-    (loop with running = t
-          while running do
-            (progn
-              ;; Handle events
-              (loop while (sdl3-raw:sdl-poll-event event) do
-                (= ((etype (cffi:mem-ref event :uint32)))
-                   (progn
-                     (format t "Event type: ~A~%" etype)
-                     (when (event-quit? etype) (setf running nil)))))
+(def clear-msgs (env) (dig= env nil :write :messages))
 
-              ;; Draw
-              (= ((now (/ (sdl3-raw:sdl-get-ticks) 1000))
-                  (red (calc-color now 0.0))
-                  (green (calc-color now 2.0))
-                  (blue (calc-color now 4.0)))
+(def get-input-events (env) env) ; TODO updateWindow
 
-                 (progn
-                   (sdl3-raw:sdl-set-render-draw-color
-                    (dig appenv :read :graphics :ren) red green blue 255)
+(def update-window (env) ; TODO better name
+  )
 
-                   (sdl3-raw:sdl-render-clear (dig appenv :read :graphics :ren))
-                   (sdl3-raw:sdl-render-present (dig appenv :read :graphics :ren))))))))
+(def update-env (env)
+  (if (out-of-time? env) env
+      (-> env
+          clear-msgs
+          process-sdl-events
+          update-window
+          update-time
+          update-env)))
 
-;; game -----------------------------------------------
+(def perform-garbage-collection () (sb-ext:gc :full t))
+
+(def run (env)
+  (set *nab--running* t)
+  (loop while *nab--running* do
+    (= ((new-env (-> env update-game update-lerp)))
+       (when (dig new-env :read :closed) (set *running* nil))
+       (perform-garbage-collection)
+       (draw-game new-env)
+       (set env new-env))))
+
+(def update-game (env) env)
+
+;; (sdl3-raw:sdl-get-window-flags (dig (mk-env) :read :graphics :win))
+
+;; (car sdl--prev-sdl-events)
+;; (car (sdl--prev-sdl-events))
+;; (get-sdl-events)
+;; (main)
+;; (set *nab--running* nil)
+
+
+
+;; (def run-game (env)
+;;   (cffi:with-foreign-object (event '(:union sdl3-raw:sdl-event))
+;;     (loop with running = t
+;;           while running do
+;;             (progn
+;;               ;; Handle events
+;;               (loop while (sdl3-raw:sdl-poll-event event) do
+;;                 (= ((etype (cffi:mem-ref event :uint32)))
+;;                    (progn
+;;                      (format t "Event type: ~A~%" etype)
+;;                      (when (event-quit? etype) (setf running nil)))))))))

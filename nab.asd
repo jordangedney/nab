@@ -13,12 +13,17 @@
                :sdl3-raw
                :bordeaux-threads
                :trivial-channels
+               :cl-mop
                )
   :components ((:file "package")
                (:file "scratch")
+               (:file "sdl")
+               (:file "events")
                (:file "util")
+               (:file "game")
+               (:file "env")
                (:file "configs")
                (:file "file-cache")
                (:file "window")
-               (:file "appenv")
+               (:file "time")
                (:file "nab")))
